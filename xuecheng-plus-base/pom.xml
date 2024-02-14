@@ -2,12 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-<!--    继承parent工程-->
+    <!--    继承parent工程-->
     <parent>
+        <!--        定位父工程的属性-->
         <groupId>com.xuecheng</groupId>
         <artifactId>xuecheng-plus-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-<!--        找到parent的pom文件的位置-->
+        <!--        找到parent的pom文件的位置-->
         <relativePath>../xuecheng-plus-parent</relativePath>
     </parent>
 
