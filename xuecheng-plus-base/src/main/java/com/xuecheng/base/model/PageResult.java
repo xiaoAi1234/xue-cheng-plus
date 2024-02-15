@@ -18,15 +18,26 @@ import java.util.List;
 @Data
 @ToString
 public class PageResult<T> implements Serializable {
+
+    // 数据列表
     private List<T> items;
-    private long page;
-    private long pageSize;
+
+    //总记录数
     private long counts;
 
-    public PageResult(List<T> items, long page, long pageSize, long counts) {
+    //当前页码
+    private long page;
+
+    //每页记录数
+    private long pageSize;
+
+    public PageResult(List<T> items, long counts, long page, long pageSize) {
         this.items = items;
+        this.counts = counts;
         this.page = page;
         this.pageSize = pageSize;
-        this.counts = counts;
     }
+
+
+
 }
