@@ -59,5 +59,7 @@ public class TeachplanMedia implements Serializable {
      */
     private String changePeople;
 
-
+    public void setterMediaId (String mediaId) {
+        this.mediaId = mediaId;
+    }
 }
