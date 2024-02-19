@@ -4,6 +4,7 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,4 +25,6 @@ public interface CourseBaseInfoService {
     public CourseBaseInfoDto createCourseBase (Long companyId,AddCourseDto addCourseDto);
     //通过id查课程信息
     public CourseBaseInfoDto getCourseBaseInfo( Long courseId);
+    //修改课程
+    public CourseBaseInfoDto updateCourseBase (Long companyId,EditCourseDto editCourseDto);
 }
