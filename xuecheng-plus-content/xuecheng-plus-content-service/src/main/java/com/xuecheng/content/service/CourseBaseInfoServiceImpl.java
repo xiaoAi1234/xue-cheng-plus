@@ -2,6 +2,7 @@ package com.xuecheng.content.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
@@ -69,7 +70,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService{
     public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto dto) {
         //合法性校验,可能存在直接调service的情况
         if (StringUtils.isBlank(dto.getName())) {
-            throw new RuntimeException("课程名称为空");
+            //使用自定义异常
+            XueChengPlusException.cast("课程名称为空");
         }
 
         if (StringUtils.isBlank(dto.getMt())) {
