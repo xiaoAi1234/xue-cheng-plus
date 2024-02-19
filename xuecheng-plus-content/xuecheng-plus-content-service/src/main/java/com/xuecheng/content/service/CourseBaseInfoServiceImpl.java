@@ -68,7 +68,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService{
     @Transactional
     //增删改事务处理
     public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto dto) {
-        //合法性校验,可能存在直接调service的情况
+        /*//合法性校验,可能存在直接调service的情况
         if (StringUtils.isBlank(dto.getName())) {
             //使用自定义异常
             XueChengPlusException.cast("课程名称为空");
@@ -96,7 +96,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService{
 
         if (StringUtils.isBlank(dto.getCharge())) {
             throw new RuntimeException("收费规则为空");
-        }
+        }*/
 
         //向课程基本信息表插数据
         CourseBase courseBaseNew = new CourseBase();
