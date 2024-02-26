@@ -1,14 +1,17 @@
 package com.xuecheng.content.model.po;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import java.io.Serializable;
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author itcast
@@ -59,7 +62,15 @@ public class TeachplanMedia implements Serializable {
      */
     private String changePeople;
 
-    public void setterMediaId (String mediaId) {
+    public void setMediaId(String mediaId) {
         this.mediaId = mediaId;
+    }
+
+    public void setTeachplanId(Long teachplanId) {
+        this.teachplanId = teachplanId;
+    }
+
+    public void setMediaFilename(String mediaFilename) {
+        this.mediaFilename = mediaFilename;
     }
 }

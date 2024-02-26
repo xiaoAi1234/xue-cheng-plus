@@ -39,6 +39,7 @@ public class CourseBaseTests {
         /*分页查询测试*/
 
         //造请求对象
+        System.out.println(courseBaseMapper);
         QueryCourseParamsDto queryCourseParamsDto = new QueryCourseParamsDto();
         queryCourseParamsDto.setCourseName("java");
         Page<CourseBase> page = new Page<>(1L,2L);
