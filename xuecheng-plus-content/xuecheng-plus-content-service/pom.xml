@@ -10,6 +10,13 @@
     <artifactId>xuecheng-plus-content-service</artifactId>
 
     <dependencies>
+<!--        service中只需要配config-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+
         <!--        依赖model-->
         <dependency>
             <groupId>com.xuecheng</groupId>

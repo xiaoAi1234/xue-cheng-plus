@@ -5,7 +5,8 @@ server:
 #微服务配置
 spring:
   application:
-    name: system-api
+    # 服务名
+    name: system-api   # system-api-dev.yaml
   # 配置nacos
   cloud:
     #nacos地址
@@ -13,8 +14,11 @@ spring:
       server-addr: 192.168.101.65:8848
       discovery:
         #根据实际情况修改
+        #dev402为命名空间ID
         namespace: dev402
         group: xuecheng-plus-project
+  profiles:
+    active: dev
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
