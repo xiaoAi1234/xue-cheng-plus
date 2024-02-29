@@ -12,6 +12,10 @@ import org.springframework.http.MediaType;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ClassName: MinioTest
@@ -86,5 +90,36 @@ public class MinioTest {
         if (source_md5.equals(target_md5)) {
             System.out.println("成功！！！");
         }
+    }
+
+    @Test
+    public  void test_merge () throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        MinioClient minioClient = MinioClient.builder().
+                endpoint("http://192.168.101.65:9000").
+                credentials("minioadmin", "minioadmin").
+                build();
+
+
+        /*for (int i = 0; i < 2; i++) {
+            UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder().
+                    filename("D:\\develop\\upload\\chunk\\" + i).
+                    bucket("testbucket").
+                    object("test/chunk/" + i).
+                    build();
+            minioClient.uploadObject(uploadObjectArgs);
+
+            System.out.println("文件" + i + "上传成功！");
+        }*/
+
+        //获取合并文件的源文件
+        List<ComposeSource> sources = new ArrayList<>();
+        List<ComposeSource> composeSources = Stream.iterate(0, i -> i++).limit(2)
+                .map(i -> ComposeSource.builder().bucket("testbucket").object("test/chunk/" + i).build())
+                //用收集器收集流中元素
+                .collect(Collectors.toList());
+        ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder().bucket("testbucket").object("/text/merge1.docx").sources(composeSources).build();
+        //合并文件
+        minioClient.composeObject(composeObjectArgs);
+
     }
 }

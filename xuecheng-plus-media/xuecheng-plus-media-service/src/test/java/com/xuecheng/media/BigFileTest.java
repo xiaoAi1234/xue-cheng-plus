@@ -25,7 +25,7 @@ public class BigFileTest {
         File file = new File("D:\\develop\\upload\\1.docx");
         RandomAccessFile raf_r = new RandomAccessFile(file,"r");
         //设置分块大小并计算分块数量
-        int chunkSize = 1024 * 1024 * 1;
+        int chunkSize = 1024 * 1024 * 5;
         int chunkNum = (int)Math.ceil((file.length() * 1.0) / chunkSize);
         //对文件块进行写入
         int len = -1;
