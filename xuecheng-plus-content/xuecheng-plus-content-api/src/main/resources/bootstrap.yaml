@@ -21,6 +21,10 @@ spring:
           - data-id: logging-${spring.profiles.active}.yaml
             group: xuecheng-plus-common
             refresh: true
+            ### 该配置文件中会指定freemarker的template在哪及文件后缀名
+          - data-id: freemarker-config-dev.yaml
+            group: xuecheng-plus-common
+            refresh: true
   profiles:
     active: dev
 

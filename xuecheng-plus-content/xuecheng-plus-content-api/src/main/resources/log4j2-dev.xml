@@ -35,6 +35,8 @@
         </Async>
     </Appenders>
 
+
+
     <Loggers>
         <!--过滤掉spring和mybatis的一些无用的debug信息
        <logger name="org.springframework" level="INFO">

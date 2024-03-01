@@ -49,3 +49,7 @@ Content-Type: application/json
 ### 查询课程计划
 GET {{content_host}}/content/teachplan/117/tree-nodes
 
+### 测试Freemarker
+//要用http
+GET http://localhost:63040/content/testfreemarker
+
