@@ -430,6 +430,12 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     }
 
+    @Override
+    public MediaFiles getFileById(String Id) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(Id);
+        return mediaFiles;
+    }
+
     /**
      * 清除分块文件
      * @param chunkFileFolderPath 分块文件路径
