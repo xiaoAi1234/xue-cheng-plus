@@ -15,4 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CoursePublishService {
     public CoursePreviewDto getCoursePreviewInfo(Long courseId);
-}
+    public void commitAudit(Long companyId,Long courseId);
+
+    }

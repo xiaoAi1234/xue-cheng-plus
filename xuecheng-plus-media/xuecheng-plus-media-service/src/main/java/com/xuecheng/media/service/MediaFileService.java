@@ -7,6 +7,7 @@ import com.xuecheng.media.model.dto.RestResponse;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 2022/9/10 8:55
  * @version 1.0
  */
+@Service
 public interface MediaFileService {
 
  /**

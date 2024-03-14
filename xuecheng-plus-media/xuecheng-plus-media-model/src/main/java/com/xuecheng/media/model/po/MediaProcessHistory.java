@@ -1,6 +1,8 @@
 package com.xuecheng.media.model.po;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,7 +21,6 @@ public class MediaProcessHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -37,10 +38,8 @@ public class MediaProcessHistory implements Serializable {
      */
     private String bucket;
 
-    private String filePath;
-
     /**
-     * 状态,1:未处理，视频处理完成更新为2
+     * 状态,1:未处理，2：处理成功  3处理失败
      */
     private String status;
 
@@ -59,6 +58,12 @@ public class MediaProcessHistory implements Serializable {
      * 媒资文件访问地址
      */
     private String url;
+
+    /**
+     * 文件路径
+     */
+    private String filePath;
+
     /**
      * 失败原因
      */
@@ -67,7 +72,7 @@ public class MediaProcessHistory implements Serializable {
     /**
      * 失败次数
      */
-    private int failCount;
+    private Integer failCount;
 
 
 }
