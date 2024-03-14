@@ -450,6 +450,11 @@ public class MediaFileServiceImpl implements MediaFileService {
         return mediaFiles;
     }
 
+    @Override
+    public List<MediaProcess> getMediaProcessList(int shardIndex, int shardTotal, int count) {
+        return null;
+    }
+
     /**
      * 清除分块文件
      * @param chunkFileFolderPath 分块文件路径
