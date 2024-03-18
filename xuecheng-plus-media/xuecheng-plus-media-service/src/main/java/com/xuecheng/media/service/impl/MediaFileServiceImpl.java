@@ -112,6 +112,7 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     }
 
+    @Override
     //把媒体资源传给MinIO
     public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName) {
         try {
@@ -325,7 +326,8 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @param fileExt 文件扩展名
      * @return
      */
-    private String getFilePathByMd5(String fileMd5,String fileExt){
+    @Override
+    public String getFilePathByMd5(String fileMd5,String fileExt){
         return   fileMd5.substring(0,1) + "/" + fileMd5.substring(1,2) + "/" + fileMd5 + "/" +fileMd5 +fileExt;
     }
 
@@ -335,6 +337,7 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @param objectName 对象名称
      * @return 下载后的文件
      */
+    @Override
     public File downloadFileFromMinIO(String bucket,String objectName){
         //临时文件
         File minioFile = null;
@@ -450,10 +453,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         return mediaFiles;
     }
 
-    @Override
-    public List<MediaProcess> getMediaProcessList(int shardIndex, int shardTotal, int count) {
-        return null;
-    }
+
 
     /**
      * 清除分块文件

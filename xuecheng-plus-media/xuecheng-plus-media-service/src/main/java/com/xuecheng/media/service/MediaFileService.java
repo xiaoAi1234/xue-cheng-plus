@@ -11,6 +11,7 @@ import com.xuecheng.media.model.po.MediaProcess;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -18,6 +19,10 @@ import java.util.List;
 public interface MediaFileService {
 
 
+
+  public String getFilePathByMd5(String fileMd5,String fileExt);
+
+  public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
  public PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
 
@@ -36,4 +41,7 @@ public interface MediaFileService {
 
  public MediaFiles getFileById(String Id);
 
-}
+ public File downloadFileFromMinIO(String bucket, String objectName);
+
+
+ }
