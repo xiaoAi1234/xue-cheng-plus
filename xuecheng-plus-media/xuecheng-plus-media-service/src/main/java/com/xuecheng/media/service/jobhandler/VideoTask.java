@@ -106,7 +106,7 @@ public class VideoTask {
 
                 String mp4_path = tempFile.getAbsolutePath();
                 String mp4_name = tempFile.getName();
-                Mp4VideoUtil videoUtil = new Mp4VideoUtil(ffmpeg_path,video_path,"1.mp4","D:\\ffmpegOutPut\\1.mp4");
+                Mp4VideoUtil videoUtil = new Mp4VideoUtil(ffmpeg_path,video_path,mp4_name,mp4_path);
                 //视频转换，成功将返回success
                 String result = videoUtil.generateMp4();
                 if (!result.equals("success")) {
@@ -117,7 +117,8 @@ public class VideoTask {
                 }
 
                 //将转换后的视频上传minIO
-                boolean isAdd = mediaFileService.addMediaFilesToMinIO("D:\\ffmpegOutPut\\1.mp4", "video/mp4", bucket, fileId + ".mp4");
+                   String newObjectName = filePath.substring(0,filePath.lastIndexOf('.')) + ".mp4";
+                   boolean isAdd = mediaFileService.addMediaFilesToMinIO(mp4_path, "video/mp4", bucket, newObjectName);
                 if (!isAdd) {
                     //记录错误信息
                     log.error("上传视频失败");

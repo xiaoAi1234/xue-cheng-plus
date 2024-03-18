@@ -2,7 +2,10 @@ package com.xuecheng.base.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,10 +31,23 @@ public class VideoUtil {
         String target_time = get_video_time(target);
         //取出时分秒
         target_time = target_time.substring(0,target_time.lastIndexOf("."));
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String target_time1 = null;
+        String target_time2 = null;
+        try {
+            Date date = formatter.parse(target_time);
+            long time = date.getTime();
+            target_time1 = formatter.format(time - 1000);
+            target_time2 = formatter.format(time + 1000);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         if(source_time == null || target_time == null){
             return false;
         }
-        if(source_time.equals(target_time)){
+        if(source_time.equals(target_time) || source_time.equals(target_time1) || source_time.equals(target_time2)){
             return true;
         }
         return false;
