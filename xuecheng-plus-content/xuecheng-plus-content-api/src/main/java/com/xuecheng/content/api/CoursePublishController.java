@@ -17,6 +17,8 @@ import com.xuecheng.content.model.po.TeachplanMedia;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import com.xuecheng.content.service.CoursePublishService;
 import com.xuecheng.content.service.TeachplanService;
+import com.xuecheng.messagesdk.service.MqMessageService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +53,7 @@ public class CoursePublishController {
 
 
 
+
     @GetMapping("/coursepreview/{courseId}")
     public ModelAndView preview(@PathVariable("courseId") Long courseId){
 
@@ -68,6 +71,16 @@ public class CoursePublishController {
         coursePublishService.commitAudit(companyId, courseId);
 
     }
+
+
+    @ApiOperation("课程发布")
+    @ResponseBody
+    @PostMapping ("/coursepublish/{courseId}")
+    public void coursepublish(@PathVariable("courseId") Long courseId){
+        Long companyId = 1232141425L;
+        coursePublishService.publish(companyId,courseId);
+    }
+
 
 
 
