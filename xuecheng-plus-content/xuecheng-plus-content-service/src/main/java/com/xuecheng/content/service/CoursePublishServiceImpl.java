@@ -3,6 +3,8 @@ package com.xuecheng.content.service;
 import com.alibaba.fastjson.JSON;
 import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.content.config.MultipartSupportConfig;
+import com.xuecheng.content.feignclient.MediaServiceClient;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.mapper.CoursePublishMapper;
@@ -16,17 +18,28 @@ import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.content.model.po.CoursePublishPre;
 import com.xuecheng.messagesdk.model.po.MqMessage;
 import com.xuecheng.messagesdk.service.MqMessageService;
+import feign.template.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.lang.Long;
+
+import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
 
 /**
  * ClassName: CoursePublishServiceImpl
@@ -55,6 +68,8 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     CoursePublishMapper coursePublishMapper;
     @Autowired
     MqMessageService mqMessageService;
+    @Autowired
+    MediaServiceClient mediaServiceClient;
 
 
     @Override
@@ -96,6 +111,53 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
         //删掉课程预发布表
         coursePublishPreMapper.deleteById(courseId);
+
+    }
+
+    @Override
+    public File generateCourseHtml(Long courseId) {
+
+        File htmlFile = null;
+
+        try {
+            Configuration configuration = new Configuration(Configuration.getVersion());
+            //拿到模版
+            String classpath = this.getClass().getResource("/").getPath();
+            configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates/"));
+            configuration.setDefaultEncoding("utf-8");
+            Template template = configuration.getTemplate("course_template.ftl");
+            //拿到数据
+            CoursePreviewDto coursePreviewInfo = this.getCoursePreviewInfo(courseId);
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("model", coursePreviewInfo);
+            String html = processTemplateIntoString(template, map);
+            InputStream inputStream = IOUtils.toInputStream(html, "utf-8");
+            htmlFile = File.createTempFile("coursepublish", ".html");
+            FileOutputStream outputStream = new FileOutputStream(htmlFile);
+            IOUtils.copy(inputStream,outputStream);
+        } catch (Exception ex) {
+            log.error("静态化页面出现问题，课程号：{}", courseId);
+            ex.printStackTrace();
+        }
+
+
+        return htmlFile;
+    }
+
+    @Override
+    public void uploadCourseHtml(Long courseId, File file) {
+
+        try {
+            MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
+            String upload = mediaServiceClient.upload(multipartFile, "course/", "/course/" + courseId + ".html");
+            if (upload == null) {
+                log.debug("走了降级逻辑");
+                XueChengPlusException.cast("走了降级逻辑");
+            }
+        } catch (Exception ex) {
+            XueChengPlusException.cast("走了降级逻辑");
+        }
+
 
     }
 
