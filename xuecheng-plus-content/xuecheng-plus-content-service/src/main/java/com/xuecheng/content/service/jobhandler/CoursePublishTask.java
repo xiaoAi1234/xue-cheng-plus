@@ -1,6 +1,11 @@
 package com.xuecheng.content.service.jobhandler;
 
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.content.feignclient.CourseIndex;
+import com.xuecheng.content.feignclient.SearchServiceClient;
+import com.xuecheng.content.mapper.CoursePublishMapper;
+import com.xuecheng.content.model.dto.CoursePreviewDto;
+import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.content.service.CoursePublishService;
 import com.xuecheng.messagesdk.model.po.MqMessage;
 import com.xuecheng.messagesdk.service.MessageProcessAbstract;
@@ -8,6 +13,7 @@ import com.xuecheng.messagesdk.service.MqMessageService;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +34,11 @@ import java.util.concurrent.TimeUnit;
 public class CoursePublishTask extends MessageProcessAbstract {
     @Autowired
     CoursePublishService coursePublishService;
+    @Autowired
+    CoursePublishMapper coursePublishMapper;
+    @Autowired
+    SearchServiceClient searchServiceClient;
+
 
     //任务调度入口
     @XxlJob("CoursePublishJobHandler")
@@ -53,12 +64,33 @@ public class CoursePublishTask extends MessageProcessAbstract {
     }
     //保存课程索引信息
     public void saveCourseIndex(MqMessage mqMessage,long courseId){
-        log.debug("保存课程索引信息,课程id:{}",courseId);
+
+        //任务id
+        Long taskId = mqMessage.getId();
+        MqMessageService mqMessageService = this.getMqMessageService();
+        //为了实现任务的幂等性，通过taskId找第一阶段状态
+        int stageTwo = mqMessageService.getStageTwo(taskId);
+        if (stageTwo > 0) {
+            log.debug("保存课程索引已完成");
+        }
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        CourseIndex courseIndex = new CourseIndex();
+        BeanUtils.copyProperties(coursePublish,courseIndex);
+        Boolean add = searchServiceClient.add(courseIndex);
+        if (!add) {
+            XueChengPlusException.cast("添加课程索引失败");
+        }
+
+
+
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        //任务已完成
+        mqMessageService.completedStageTwo(taskId);
 
     }
 
