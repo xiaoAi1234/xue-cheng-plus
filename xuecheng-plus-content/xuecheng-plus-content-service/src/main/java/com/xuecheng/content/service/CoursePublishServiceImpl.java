@@ -1,6 +1,7 @@
 package com.xuecheng.content.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.config.MultipartSupportConfig;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import freemarker.template.Configuration;
@@ -38,6 +40,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.lang.Long;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
 
@@ -70,6 +74,8 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     MqMessageService mqMessageService;
     @Autowired
     MediaServiceClient mediaServiceClient;
+    @Autowired
+    RedisTemplate redisTemplate;
 
 
     @Override
@@ -158,6 +164,43 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             XueChengPlusException.cast("走了降级逻辑");
         }
 
+
+    }
+
+    @Override
+    public CoursePublish getCoursePublishCache(Long courseId) {
+        //若redis有则从redis中拿
+        Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
+        if (jsonObj != null){
+            String jsonString = jsonObj.toString();
+            if ("null".equals(jsonString)){
+                return null;
+            }
+            CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+            return coursePublish;
+        } else {
+            //使用同步锁防止缓存击穿
+            synchronized (this) {
+                //再次查询缓存
+                jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
+                if (jsonObj != null) {
+                    String jsonString = jsonObj.toString();
+                    if ("null".equals(jsonString)) {
+                        return null;
+                    }
+                    CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+                    return coursePublish;
+                }
+                //先从数据库中拿再存入redis
+                CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+                //if (coursePublish != null)
+                //加入过期时间
+                //过期时间随机防止缓存雪崩
+                redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 30 + new Random().nextInt(100), TimeUnit.SECONDS);
+                return coursePublish;
+            }
+
+        }
 
     }
 

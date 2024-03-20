@@ -10,10 +10,7 @@ import com.xuecheng.content.mapper.TeachplanMediaMapper;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
-import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.model.po.CourseMarket;
-import com.xuecheng.content.model.po.CoursePublishPre;
-import com.xuecheng.content.model.po.TeachplanMedia;
+import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import com.xuecheng.content.service.CoursePublishService;
 import com.xuecheng.content.service.TeachplanService;
@@ -80,6 +77,31 @@ public class CoursePublishController {
         Long companyId = 1232141425L;
         coursePublishService.publish(companyId,courseId);
     }
+
+    @ApiOperation("获取课程发布信息")
+    @ResponseBody
+    @GetMapping("/course/whole/{courseId}")
+    public CoursePreviewDto getCoursePublish(@PathVariable("courseId") Long courseId) {
+        //查询课程发布信息
+        CoursePublish coursePublish = coursePublishService.getCoursePublishCache(courseId);
+//        CoursePublish coursePublish = coursePublishService.getCoursePublish(courseId);
+        if(coursePublish==null){
+            return new CoursePreviewDto();
+        }
+
+        //课程基本信息
+        CourseBaseInfoDto courseBase = new CourseBaseInfoDto();
+        BeanUtils.copyProperties(coursePublish, courseBase);
+        //课程计划
+        List<TeachplanDto> teachplans = JSON.parseArray(coursePublish.getTeachplan(), TeachplanDto.class);
+        //更新课程查看信息表
+        CoursePreviewDto coursePreviewInfo = new CoursePreviewDto();
+        coursePreviewInfo.setCourseBase(courseBase);
+        coursePreviewInfo.setTeachplans(teachplans);
+
+        return coursePreviewInfo;
+    }
+
 
 
 

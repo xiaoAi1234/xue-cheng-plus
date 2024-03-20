@@ -1,6 +1,7 @@
 package com.xuecheng.content.service;
 
 import com.xuecheng.content.model.dto.CoursePreviewDto;
+import com.xuecheng.content.model.po.CoursePublish;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -21,6 +22,7 @@ public interface CoursePublishService {
     public void publish(Long companyId, Long courseId);
     public File generateCourseHtml(Long courseId);
     public void  uploadCourseHtml(Long courseId,File file);
+    public CoursePublish getCoursePublishCache(Long courseId);
 
 
 }

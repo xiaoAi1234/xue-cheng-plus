@@ -1,5 +1,6 @@
 package com.xuecheng.content.service.jobhandler;
 
+import com.alibaba.fastjson.JSON;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.feignclient.CourseIndex;
 import com.xuecheng.content.feignclient.SearchServiceClient;
@@ -15,6 +16,7 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -38,6 +40,8 @@ public class CoursePublishTask extends MessageProcessAbstract {
     CoursePublishMapper coursePublishMapper;
     @Autowired
     SearchServiceClient searchServiceClient;
+    @Autowired
+    RedisTemplate redisTemplate;
 
 
     //任务调度入口
@@ -54,11 +58,24 @@ public class CoursePublishTask extends MessageProcessAbstract {
     //将课程信息缓存至redis
     public void saveCourseCache(MqMessage mqMessage,long courseId){
         log.debug("将课程信息缓存至redis,课程id:{}",courseId);
+        //任务id
+        Long taskId = mqMessage.getId();
+        MqMessageService mqMessageService = this.getMqMessageService();
+        //为了实现任务的幂等性，通过taskId找第一阶段状态
+        int stageThree = mqMessageService.getStageThree(taskId);
+        if (stageThree > 0) {
+            log.debug("保存课程索引已完成");
+        }
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish));
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        //任务已完成
+        mqMessageService.completedStageThree(taskId);
 
 
     }
