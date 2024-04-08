@@ -25,9 +25,11 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    DaoAuthenticationProviderCustom daoAuthenticationProviderCustom;
 
     //配置用户信息服务
-   /* @Bean
+   /*@Bean
     public UserDetailsService userDetailsService() {
         //这里配置用户信息,这里暂时使用这种方式将用户存储在内存中
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -40,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 
     //设置密码的加密方式
     @Bean
