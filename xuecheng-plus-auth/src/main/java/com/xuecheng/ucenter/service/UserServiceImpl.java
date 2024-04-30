@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserDetailsService {
     @Autowired
     ApplicationContext applicationContext;
     @Override
-    //AuthParamsDto传入此处
+    //AuthParamsDto以json串的格式传入此处
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         //将传入的json串转成AuthParamsDto
         AuthParamsDto authParamsDto = null;
@@ -44,13 +44,14 @@ public class UserServiceImpl implements UserDetailsService {
         } catch (Exception e) {
             throw new RuntimeException("传入的json串与对象不匹配");
         }
-        //根据认证类型从容器中取相应的Bean
+
         String authType = authParamsDto.getAuthType();
         String beanName = authType + "_authservice";
+        //根据认证类型从容器中取相应的Bean
         AuthService authService = applicationContext.getBean(beanName, AuthService.class);
         //完成认证
         XcUserExt xcUserExt = authService.execute(authParamsDto);
-        //封装xcUserExt为userDetails
+        //为登录用户颁发权限，并使其携带必要的信息
         UserDetails userPrincipal = getUserPrincipal(xcUserExt);
         return userPrincipal;
     }
